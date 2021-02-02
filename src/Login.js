@@ -4,7 +4,7 @@ import { Container } from 'reactstrap';
 import { Form, Alert, FormGroup, Input, Label, Row, Col } from "reactstrap";
 import Button from 'react-bootstrap/Button';
 import AuthenticationService from './AuthenticationService';
-import avatar from '../avatar.png';
+import avatar from './avatar.png';
 import './App.css';
 
 class Login extends Component {
@@ -45,7 +45,7 @@ class Login extends Component {
   render() {
     return ( 
       <div>
-        <AppNavbar/>
+        <AppNavBar/>
         <Container fluid>
           <Row style={{marginTop:"20px"}}>
           <Col sm="12" md={{ size: 3, offset: 4 }}>

@@ -80,7 +80,7 @@ class userRegister extends Component {
     const valid = validateForm(this.state.errors);
     this.setState({validForm: valid});
     if(valid){
-      Authentication.register(
+      AuthenticationService.userRegister(
         this.state.nome,
         this.state.cognome,
         this.state.email,
@@ -106,7 +106,7 @@ class userRegister extends Component {
 
   render()
   {
-    const title = <h2>Register User</h2>;
+    const title = <h2>Nuovo Utente</h2>;
     const errors = this.state.errors;
 
     let alert = "";
@@ -129,7 +129,7 @@ class userRegister extends Component {
 
     return ( 
       <div>
-        <AppNavbar/>
+        <AppNavBar/>
         <Container fluid>
           <Row>
           <Col sm="12" md={{ size: 4, offset: 4 }}>
@@ -212,7 +212,7 @@ class userRegister extends Component {
               </FormGroup>
 
               <Button variant="primary" type="submit">
-                Create
+                Crea Account
               </Button>
               {
                 !this.state.validForm && (

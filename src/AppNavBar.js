@@ -34,7 +34,7 @@ class AppNavbar extends Component {
   }
 
   logOut = () => {
-    AuthenticationService.logOut(); //da finire 
+    AuthenticationService.logOut();
     window.location.reload();
   }
 
@@ -61,9 +61,6 @@ class AppNavbar extends Component {
             <Nav className="ml-auto" navbar>
               <NavItem>
                 <NavLink href="/userLogin">Login</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="/userRegister">Registrati</NavLink>
               </NavItem>
             </Nav>
           )

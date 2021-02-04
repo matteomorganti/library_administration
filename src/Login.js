@@ -13,7 +13,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      email: "",
+      utente: "",
       password: "",
       error: ""
     };
@@ -28,16 +28,16 @@ class Login extends Component {
   doLogin = async (event) => {
     event.preventDefault();
 
-    AuthenticationService
-    .userLogin(this.state.email, 
-                  this.state.password)
-      .then(
-        () => {
+      AuthenticationService
+      .userLogin(this.state.utente, 
+                    this.state.password)  
+        .then(
+          () => {
           this.props.history.push('/Dashboard');
         },
         error => {
           console.log("Login fail: error = { " + error.toString() + " }");
-          this.setState({error: "Controllare email e password"});
+          this.setState({error: "Controllare nome utente e password"});
         }
     );
   }
@@ -51,29 +51,30 @@ class Login extends Component {
           <Col sm="12" md={{ size: 3, offset: 4 }}>
             <div style={{marginBottom: "10px"}}>
               <img src={avatar} alt="Avatar" className="avatar center" 
-                style={{width: "50%", height: "auto"}}/>
+                style={{width: "15%", height: "15%"}}/>
             </div>
-            <Form  onSubmit={this.doLogin}>
-              <FormGroup>
-                <Label for="email"><strong>Email</strong></Label>
+            <Form  style={{textAlign:"center"}} onSubmit={this.doLogin}>
+              <FormGroup style={{display: "flex", justifyContent: "center", padding:"1.5rem"}}>
                 <Input autoFocus 
                   type="text"
-                  name="email" id="email"
-                  value={this.state.email}
-                  placeholder="Inserisci Email"
-                  autoComplete="email"
+                  name="utente" id="utente"
+                  value={this.state.utente}
+                  placeholder="Nome utente"
+                  autoComplete="utente"
                   onChange={this.changeHandler}
+                  style={{padding:"0.25rem"}}
                 />
               </FormGroup>
 
-              <FormGroup>
-                <Label for="password"><strong>Password</strong></Label>
+              <FormGroup style={{display: "flex", justifyContent: "center", padding:"1.5rem"}}>
+
                 <Input type="password" 
                   name="password" id="password"
                   value={this.state.password}
-                  placeholder="Inserisci Password"
+                  placeholder="Password"
                   autoComplete="password"
                   onChange={this.changeHandler}
+                  style={{padding:"0.35rem", borderRadius:"4px"}}
                 />
               </FormGroup>
 

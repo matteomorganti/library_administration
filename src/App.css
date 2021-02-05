@@ -31,16 +31,6 @@
   color: white;
 }
 
-/*@media screen and (max-width: 670px) {
-
-  .Avatar{
-    margin: center;
-    width: 150%;
-    height: 150%;
-  }
-
-}*/
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -7,6 +7,7 @@ import AuthenticationService from './AuthenticationService';
 import avatar from './avatar.png';
 import './App.css';
 
+
 class Login extends Component {
 
   constructor(props) {

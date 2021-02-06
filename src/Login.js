@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withRouter } from "react-router";
-import AppNavBar from "./AppNavBar";
 import { Container } from "reactstrap";
-import { Form, Alert, FormGroup, Input, Label, Row, Col } from "reactstrap";
+import { Form, Alert, FormGroup, Input, Row, Col } from "reactstrap";
 import Button from "react-bootstrap/Button";
 import AuthenticationService from "./AuthenticationService";
 import avatar from "./avatar.png";
@@ -11,7 +9,7 @@ import "./App.css";
 
 class Login extends React.Component {
   static propTypes = {
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
   };
   constructor(props) {
     super(props);
@@ -49,7 +47,6 @@ class Login extends React.Component {
   render() {
     return (
       <div>
-        <AppNavBar />
         <Container fluid>
           <Row style={{ marginTop: "20px" }}>
             <Col sm="12" md={{ size: 3, offset: 4 }}>

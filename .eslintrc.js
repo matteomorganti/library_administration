@@ -4,21 +4,19 @@ module.exports = {
     es2021: true,
   },
   parser: "babel-eslint",
- extends: [
-    "plugin:react/recommended"
- ],
+  extends: ["plugin:react/recommended"],
   parserOptions: {
     ecmaVersion: 2021,
     sourceType: "module",
   },
-  
+
   plugins: ["react"],
   rules: {
     "no-unused-vars": "off",
     "react/prop-types": [
-      "enabled",
-      { "ignore": "ignore", "customValidators": "customValidator" }
+      0,
+      { ignore: "ignore", customValidators: "customValidator" },
     ],
-    "react/no-deprecated": "off"
+    "react/no-deprecated": "off",
   },
 };

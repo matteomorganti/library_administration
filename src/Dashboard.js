@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import AppNavBar from "./AppNavBar";
-import { Link } from "react-router-dom";
-import { Button, Container } from "reactstrap";
-import Alert from "react-bootstrap/Alert";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import AuthenticationService from "./AuthenticationService";
+import Sidebar from "./Sidebar";
+import "./Dashboard.css";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -18,7 +17,12 @@ class Dashboard extends Component {
   }
 
   render() {
-    return <div></div>;
+    return (
+      <div>
+        <Sidebar />
+      </div>
+    );
   }
 }
+
 export default Dashboard;

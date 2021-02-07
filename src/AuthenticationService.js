@@ -29,7 +29,10 @@ class AuthenticationService {
   };
 
   logOut() {
-    axios.get("http://progettopawm.ns0.it:8090/api/authentication/logout", {});
+    axios.get(
+      "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/authentication/logout",
+      {}
+    );
     return localStorage.removeItem("token");
   }
 

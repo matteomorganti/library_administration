@@ -4,7 +4,7 @@ import "./App.css";
 import Dashboard from "./Dashboard";
 import Login from "./Login";
 
-class App extends React.Component {
+export default class App extends React.Component {
   componentDidMount() {
     document.title = "Admin Panel";
   }
@@ -21,5 +21,3 @@ class App extends React.Component {
     );
   }
 }
-
-export default App;

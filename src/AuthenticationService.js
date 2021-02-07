@@ -6,10 +6,10 @@ class AuthenticationService {
   userLogin = (utente, password) => {
     password = sha256(password);
     return axios
-      .post(
-        "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/authentication/adminLogin",
-        { utente, password }
-      )
+      .post("http://progettopawm.ns0.it:8090/api/authentication/adminLogin", {
+        utente,
+        password,
+      })
       .then((response) => {
         if (response.data) {
           localStorage.setItem(

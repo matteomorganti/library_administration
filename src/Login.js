@@ -7,7 +7,7 @@ import AuthenticationService from "./AuthenticationService";
 import avatar from "./avatar.png";
 import "./App.css";
 
-class Login extends React.Component {
+class Login extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
   };

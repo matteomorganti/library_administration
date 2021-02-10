@@ -6,6 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
+import ReactDom from "react-dom";
 import PropTypes from "prop-types";
 import AuthenticationService from "./AuthenticationService";
 
@@ -27,19 +28,13 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/:utente",
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/" + utente,
         { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
         console.log(response);
       });
   }
-
-  doLogout = async (event) => {
-    event.preventDefault();
-    AuthenticationService.logOut();
-    this.props.history.push("/userLogin");
-  };
 
   libriNonRestituiti() {
     let JWTToken = localStorage.getItem("token");
@@ -65,16 +60,33 @@ class Dashboard extends Component {
       });
   }
 
-  getLibri() {
+  getUser() {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/numberLibriUtente/:utente",
-        { headers: { Authorization: `${JWTToken}` } }
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/authentication/getUsers",
+        {
+          headers: { Authorization: `${JWTToken}` },
+        }
       )
       .then((response) => {
         console.log(JWTToken);
       });
+  }
+
+  getLibri() {
+    let result = [];
+    let JWTToken = localStorage.getItem("token");
+    axios
+      .get("http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/getAll", {
+        headers: { Authorization: `${JWTToken}` },
+      })
+      .then((response) => {
+        result = response.data[0];
+        console.log(response.data);
+        console.log(JWTToken);
+      });
+    result.forEach((el) => console.log(el));
   }
 
   addPrenotazione = (utente, libro, dataPrenotazione) => {
@@ -113,10 +125,7 @@ class Dashboard extends Component {
           <Nav className="mr-auto">
             <Nav.Link href="">Inserisci libro</Nav.Link>
             <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item
-                onClick={this.libriPrenotati}
-                href="#action/3.1"
-              >
+              <NavDropdown.Item onClick={this.getUser} href="#action/3.1">
                 Visualizza libri
               </NavDropdown.Item>
               <NavDropdown.Item

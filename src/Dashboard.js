@@ -27,8 +27,8 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/prenotazioni/libriUtente/:utente",
-        { headers: { Authorization: `Bearer ${JWTToken}` } }
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/:utente",
+        { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
         console.log(response);
@@ -45,42 +45,48 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/prenotazioni/daRestituire/:utente",
-        { headers: { Authorization: `Bearer ${JWTToken}` } }
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/daRestituire/:utente",
+        { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
         console.log(JWTToken);
       });
   }
-
-  doLogout = async (event) => {
-    event.preventDefault();
-    AuthenticationService.logOut();
-    this.props.history.push("/userLogin");
-  };
 
   numeroLibriNoleggiati() {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/prenotazioni/numberLibriUtente/:utente",
-        { headers: { Authorization: `Bearer ${JWTToken}` } }
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/numberLibriUtente/:utente",
+        { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
         console.log(JWTToken);
       });
   }
 
-  inserisciLibro = (utente, libro, dataPrenotazione) => {
+  getLibri() {
+    let JWTToken = localStorage.getItem("token");
+    axios
+      .get(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/numberLibriUtente/:utente",
+        { headers: { Authorization: `${JWTToken}` } }
+      )
+      .then((response) => {
+        console.log(JWTToken);
+      });
+  }
+
+  addPrenotazione = (utente, libro, dataPrenotazione) => {
     let JWTToken = localStorage.getItem("token");
     axios
       .post(
-        "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/prenotazioni/addPrenotazione",
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/addPrenotazione",
         {
           utente,
           libro,
           dataPrenotazione,
-          headers: { Authorization: `Bearer ${JWTToken}` },
+          headers: { Authorization: `${JWTToken}` },
         }
       )
       .then((response) => {
@@ -105,13 +111,37 @@ class Dashboard extends Component {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link href="#link">Inserisci libro</Nav.Link>
-            <NavDropdown title="Prenotazioni" id="basic-nav-dropdown">
+            <Nav.Link href="">Inserisci libro</Nav.Link>
+            <NavDropdown title="Libri" id="basic-nav-dropdown">
               <NavDropdown.Item
                 onClick={this.libriPrenotati}
                 href="#action/3.1"
               >
-                Libri noleggiati
+                Visualizza libri
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={this.libriNonRestituiti}
+                href="#action/3.2"
+              >
+                Visualizza autori
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={this.numeroLibriNoleggiati}
+                href="#action/3.3"
+              >
+                Numero libri noleggiati{" "}
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item href="#action/3.4">
+                Inserisci prenotazione
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Gestione prenotazioni" id="basic-nav-dropdown">
+              <NavDropdown.Item
+                onClick={this.libriPrenotati}
+                href="#action/3.1"
+              >
+                Libri prenotati
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.libriNonRestituiti}
@@ -127,7 +157,7 @@ class Dashboard extends Component {
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">
-                Inserisci; prenotazione
+                Inserisci prenotazione
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

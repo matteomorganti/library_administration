@@ -6,21 +6,21 @@ class AuthenticationService {
   userLogin = (utente, password) => {
     password = sha256(password);
     return axios
-      .post("http://progettopawm.ns0.it:8090/api/authentication/adminLogin", {
-        utente,
-        password,
-      })
+      .post(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/authentication/adminLogin",
+        {
+          utente,
+          password,
+        }
+      )
       .then((response) => {
         if (response.data) {
           localStorage.setItem(
             "token",
-            response.data.data.jwt.substring(7, response.data.data.jwt.lenght)
+            response.data.data.jwt.substring(response.data.data.jwt.lenght)
           );
         }
-        return response.data.data.jwt.substring(
-          7,
-          response.data.data.jwt.lenght
-        );
+        return response.data.data.jwt.substring(response.data.data.jwt.lenght);
       })
       .catch((err) => {
         console.log(err);
@@ -29,9 +29,12 @@ class AuthenticationService {
   };
 
   logOut() {
+    let JWTToken = localStorage.getItem("token");
     axios.get(
-      "https://warm-sierra-79194.herokuapp.com/http://progettopawm.ns0.it:8090/api/authentication/logout",
-      {}
+      "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/authentication/logout",
+      {
+        headers: { Authorization: `${JWTToken}` },
+      }
     );
     return localStorage.removeItem("token");
   }

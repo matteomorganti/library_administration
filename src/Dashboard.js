@@ -129,11 +129,11 @@ class Dashboard extends Component {
                 onClick={this.numeroLibriNoleggiati}
                 href="#action/3.3"
               >
-                Numero libri noleggiati{" "}
+                visualizza dettagli libro tramite id{" "}
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">
-                Inserisci prenotazione
+                Cerca libro in base al titolo
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Gestione prenotazioni" id="basic-nav-dropdown">

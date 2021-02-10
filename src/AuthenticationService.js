@@ -29,13 +29,6 @@ class AuthenticationService {
   };
 
   logOut() {
-    let JWTToken = localStorage.getItem("token");
-    axios.get(
-      "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/authentication/logout",
-      {
-        headers: { Authorization: `${JWTToken}` },
-      }
-    );
     return localStorage.removeItem("token");
   }
 

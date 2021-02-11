@@ -71,6 +71,7 @@ class Dashboard extends Component {
         }
       )
       .then((response) => {
+        console.log(response.data);
         console.log(JWTToken);
       });
   }
@@ -126,9 +127,8 @@ class Dashboard extends Component {
           <Nav className="mr-auto">
             <Nav.Link href="">Inserisci libro</Nav.Link>
             <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={this.getLibri} href="#action/3.1">
+              <NavDropdown.Item onClick={this.getUser} href="#action/3.1">
                 Visualizza libri
-                <div>{this.state.data.map((q) => new Data(q))}</div>;
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.libriNonRestituiti}

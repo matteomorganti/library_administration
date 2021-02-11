@@ -28,7 +28,8 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/" + utente,
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/" +
+          utente,
         { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
@@ -82,11 +83,11 @@ class Dashboard extends Component {
         headers: { Authorization: `${JWTToken}` },
       })
       .then((response) => {
-        result = response.data[0];
-        console.log(response.data);
+        this.setState({ data: response.data });
+        result = response.data;
+        console.log(JSON.parse(response.data));
         console.log(JWTToken);
       });
-    result.forEach((el) => console.log(el));
   }
 
   addPrenotazione = (utente, libro, dataPrenotazione) => {
@@ -125,8 +126,9 @@ class Dashboard extends Component {
           <Nav className="mr-auto">
             <Nav.Link href="">Inserisci libro</Nav.Link>
             <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={this.getUser} href="#action/3.1">
+              <NavDropdown.Item onClick={this.getLibri} href="#action/3.1">
                 Visualizza libri
+                <div>{this.state.data.map((q) => new Data(q))}</div>;
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.libriNonRestituiti}

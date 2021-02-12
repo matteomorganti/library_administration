@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Navbar from "react-bootstrap/Navbar";
@@ -7,10 +7,13 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import ReactDom from "react-dom";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import AuthenticationService from "./AuthenticationService";
 
 class Dashboard extends Component {
+  state = { data: [] };
+
   static propTypes = {
     history: PropTypes.object.isRequired,
   };
@@ -53,7 +56,8 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/numberLibriUtente/:utente",
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/numberLibriUtente/" +
+          utente,
         { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
@@ -76,20 +80,19 @@ class Dashboard extends Component {
       });
   }
 
-  getLibri() {
-    let result = [];
+  getAllLibri = async () => {
     let JWTToken = localStorage.getItem("token");
-    axios
+    const response = axios
       .get("http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/getAll", {
         headers: { Authorization: `${JWTToken}` },
       })
       .then((response) => {
-        this.setState({ data: response.data });
-        result = response.data;
-        console.log(JSON.parse(response.data));
+        console.log(response.data); //metodo Roberto
         console.log(JWTToken);
-      });
-  }
+        this.setState({ data: response.data});
+      })
+      .catch((error) => console.error(`Error:  ${error}`));
+  };
 
   addPrenotazione = (utente, libro, dataPrenotazione) => {
     let JWTToken = localStorage.getItem("token");
@@ -127,20 +130,21 @@ class Dashboard extends Component {
           <Nav className="mr-auto">
             <Nav.Link href="">Inserisci libro</Nav.Link>
             <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={this.getUser} href="#action/3.1">
+              <NavDropdown.Item onClick={this.getAllLibri} href="#action/3.1">
                 Visualizza libri
+                <div>{this.state.data.length}</div>
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.libriNonRestituiti}
                 href="#action/3.2"
               >
-                Visualizza autori
+                Visualizza generi
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.numeroLibriNoleggiati}
                 href="#action/3.3"
               >
-                visualizza dettagli libro tramite id{" "}
+                Inserisci nuovo genere
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">

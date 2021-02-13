@@ -1,0 +1,28 @@
+body {
+  background-color: #f3f4f5;
+}
+
+.sidBar {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "sb main";
+  height: 100vh;
+  background-color: white;
+}
+
+.sb {
+  overflow-y: hidden;
+  grid-area: sb;
+  background-color: #006ddb;
+  color: whitesmoke;
+}
+
+.main {
+  grid-area: main;
+  background-color: #f3f4f5;
+}
+
+.menuIcon {
+  color: whitesmoke;
+}

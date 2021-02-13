@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import AuthenticationService from "./AuthenticationService";
 import avatar from "./avatar.png";
-import "./Login.css";
+import "./css/Login.css";
 import Grid from "@material-ui/core/Grid";
 
 class Login extends Component {
@@ -111,7 +111,7 @@ class Login extends Component {
                     variant="contained"
                     type="submit"
                     style={{
-                      color: "white",
+                      color: "whitesmoke",
                       backgroundColor: "#006ddb",
                       marginTop: "10px",
                     }}

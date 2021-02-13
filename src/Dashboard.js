@@ -7,19 +7,22 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Collapse from "@material-ui/core/Collapse";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
-import SendIcon from "@material-ui/icons/Send";
+import HomeIcon from "@material-ui/icons/Home";
+import BookIcon from "@material-ui/icons/Book";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import PersonIcon from "@material-ui/icons/Person";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import StarBorder from "@material-ui/icons/StarBorder";
-import Button from "react-bootstrap/Button";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Form from "react-bootstrap/Form";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 import PropTypes from "prop-types";
 import AuthenticationService from "./AuthenticationService";
-import "./Dashboard.css";
+import "./css/Dashboard.css";
 
 class Dashboard extends Component {
   state = { user: [], book: [] };
@@ -124,130 +127,66 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <List
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
-            Nested List Items
-          </ListSubheader>
-        }
-      >
-        <ListItem button>
-          <ListItemIcon>
-            <SendIcon />
-          </ListItemIcon>
-          <ListItemText primary="Sent mail" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <DraftsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Drafts" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary="Inbox" />
-          {open ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+      <div className="sidBar">
+        <div className="sb">
+          <List component="nav" aria-labelledby="nested-list-subheader">
             <ListItem button>
               <ListItemIcon>
-                <StarBorder />
+                <HomeIcon className={"menuIcon"} />
               </ListItemIcon>
-              <ListItemText primary="Starred" />
+              <ListItemText primary="Home" />
             </ListItem>
+            <ListItem button>
+              <ListItemIcon>
+                <BookIcon className={"menuIcon"}/>
+              </ListItemIcon>
+              <ListItemText primary="Libri" />
+            </ListItem>
+            <ListItem button onClick={this.getUser}>
+              <ListItemIcon>
+                <PersonIcon className={"menuIcon"}/>
+              </ListItemIcon>
+              <ListItemText primary="Lista Utenti" />
+            </ListItem>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem button onClick={this.doLogout}>
+                  <ListItemIcon>
+                    <ExitToAppIcon className={"menuIcon"}/>
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItem>
+              </List>
+            </Collapse>
           </List>
-        </Collapse>
-      </List>
-      /*<Navbar bg="dark" expand="lg">
-        <Navbar.Brand>Benvenuto!</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            <Nav.Link href="">Inserisci libro</Nav.Link>
-            <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item
-                onClick={this.getAllLibri}
-                style={{ textDecoration: "none" }}
-                href="#action/3.1"
-              >
-                Lista libri
-                <div>
-                  {this.state.book.map((libro) => (
-                    <p key="book">
-                      {libro.Titolo}
-                      &nbsp;
-                      {libro.ID}
-                    </p>
+        </div>
+        <div className="main">
+          <div style={{ padding: "2rem" }}>
+            <TableContainer component={Paper}>
+              <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Id</TableCell>
+                    <TableCell>Nome</TableCell>
+                    <TableCell>Cognome</TableCell>
+                    <TableCell>Email</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {this.state.user.map((utente) => (
+                    <TableRow key="user">
+                      <TableCell>{utente.ID}</TableCell>
+                      <TableCell>{utente.Nome}</TableCell>
+                      <TableCell>{utente.Cognome}</TableCell>
+                      <TableCell>{utente.Email}</TableCell>
+                    </TableRow>
                   ))}
-                </div>
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={this.libriNonRestituiti}
-                href="#action/3.2"
-              >
-                Lista generi
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={this.numeroLibriNoleggiati}
-                href="#action/3.3"
-              >
-                Inserisci nuovo genere
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-            </NavDropdown>
-            <Nav.Link href="" onClick={this.getUser}>
-              Lista Utenti
-              <div>
-                {this.state.user.map((utente) => (
-                  <p key="user">
-                    {utente.ID}
-                    &nbsp;
-                    {utente.Nome}
-                    &nbsp;
-                    {utente.Cognome}
-                    &nbsp;
-                    {utente.Email}
-                  </p>
-                ))}
-              </div>
-            </Nav.Link>
-            <NavDropdown title="Gestione prenotazioni" id="basic-nav-dropdown">
-              <NavDropdown.Item
-                onClick={this.libriPrenotati}
-                href="#action/3.1"
-              >
-                Libri prenotati
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={this.libriNonRestituiti}
-                href="#action/3.2"
-              >
-                Libri da restituire
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={this.numeroLibriNoleggiati}
-                href="#action/3.3"
-              >
-                Numero libri noleggiati{" "}
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Inserisci prenotazione
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-          <Form inline>
-            <Button onClick={this.doLogout} variant="outline-success">
-              Logout
-            </Button>
-          </Form>
-        </Navbar.Collapse>
-      </Navbar>*/
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        </div>
+      </div>
     );
   }
 }

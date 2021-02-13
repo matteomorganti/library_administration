@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import AuthenticationService from "./AuthenticationService";
 
 class Dashboard extends Component {
-  state = { data: [] };
+  state = { user: [], book: [] };
 
   static propTypes = {
     history: PropTypes.object.isRequired,
@@ -65,7 +65,7 @@ class Dashboard extends Component {
       });
   }
 
-  getUser() {
+  getUser = async () => {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
@@ -77,42 +77,33 @@ class Dashboard extends Component {
       .then((response) => {
         console.log(response.data);
         console.log(JWTToken);
-      });
-  }
-
-  getAllLibri = async () => {
-    let JWTToken = localStorage.getItem("token");
-    const response = axios
-      .get("http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/getAll", {
-        headers: { Authorization: `${JWTToken}` },
-      })
-      .then((response) => {
-        console.log(response.data); //metodo Roberto
-        console.log(JWTToken);
-        this.setState({ data: response.data});
+        const utente = response.data.data[0].map((obj) => ({
+          ID: obj.ID,
+          Nome: obj.Nome,
+          Cognome: obj.Cognome,
+          Email: obj.Email,
+        }));
+        this.setState({ user: utente });
       })
       .catch((error) => console.error(`Error:  ${error}`));
   };
 
-  addPrenotazione = (utente, libro, dataPrenotazione) => {
+  getAllLibri = async () => {
     let JWTToken = localStorage.getItem("token");
     axios
-      .post(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/addPrenotazione",
-        {
-          utente,
-          libro,
-          dataPrenotazione,
-          headers: { Authorization: `${JWTToken}` },
-        }
-      )
-      .then((response) => {
-        console.log(response);
+      .get("http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/getAll", {
+        headers: { Authorization: `${JWTToken}` },
       })
-      .catch((err) => {
-        console.log(err);
-        throw err;
-      });
+      .then((response) => {
+        console.log(response.data);
+        console.log(JWTToken);
+        const libri = response.data.data[0].map((obj) => ({
+          ID: obj.ID,
+          Titolo: obj.Titolo,
+        }));
+        this.setState({ book: libri });
+      })
+      .catch((error) => console.error(`Error:  ${error}`));
   };
 
   doLogout = async (event) => {
@@ -123,22 +114,34 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="#home">Benvenuto!</Navbar.Brand>
+      <Navbar bg="dark" expand="lg">
+        <Navbar.Brand>Benvenuto!</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <Nav.Link href="">Inserisci libro</Nav.Link>
             <NavDropdown title="Libri" id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={this.getAllLibri} href="#action/3.1">
-                Visualizza libri
-                <div>{this.state.data.length}</div>
+              <NavDropdown.Item
+                onClick={this.getAllLibri}
+                style={{ textDecoration: "none" }}
+                href="#action/3.1"
+              >
+                Lista libri
+                <div>
+                  {this.state.book.map((libro) => (
+                    <p key="book">
+                      {libro.Titolo}
+                      &nbsp;
+                      {libro.ID}
+                    </p>
+                  ))}
+                </div>
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.libriNonRestituiti}
                 href="#action/3.2"
               >
-                Visualizza generi
+                Lista generi
               </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={this.numeroLibriNoleggiati}
@@ -147,10 +150,23 @@ class Dashboard extends Component {
                 Inserisci nuovo genere
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Cerca libro in base al titolo
-              </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link href="" onClick={this.getUser}>
+              Lista Utenti
+              <div>
+                {this.state.user.map((utente) => (
+                  <p key="user">
+                    {utente.ID}
+                    &nbsp;
+                    {utente.Nome}
+                    &nbsp;
+                    {utente.Cognome}
+                    &nbsp;
+                    {utente.Email}
+                  </p>
+                ))}
+              </div>
+            </Nav.Link>
             <NavDropdown title="Gestione prenotazioni" id="basic-nav-dropdown">
               <NavDropdown.Item
                 onClick={this.libriPrenotati}

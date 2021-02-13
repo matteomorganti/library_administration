@@ -1,3 +1,4 @@
-.root {
-  display: flex;
+body {
+  background-color: #f3f4f5;
+  background-image: none !important;
 }

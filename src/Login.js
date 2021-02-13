@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Container } from "reactstrap";
-import { Form, Alert, FormGroup, Input, Row, Col } from "reactstrap";
-import Button from "react-bootstrap/Button";
+import { Form, Alert, Row, Col } from "reactstrap";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import AuthenticationService from "./AuthenticationService";
 import avatar from "./avatar.png";
-import "./App.css";
+import "./Login.css";
+import Grid from "@material-ui/core/Grid";
 
 class Login extends Component {
   static propTypes = {
@@ -47,7 +49,7 @@ class Login extends Component {
   render() {
     return (
       <div>
-        <Container fluid>
+        <Container fluid style={{ margin: "0 auto", width: "fit-content" }}>
           <Row style={{ marginTop: "20px" }}>
             <Col sm="12" md={{ size: 3, offset: 4 }}>
               <div style={{ marginBottom: "10px" }}>
@@ -58,49 +60,65 @@ class Login extends Component {
                   style={{ width: "15%", height: "15%" }}
                 />
               </div>
-              <Form style={{ textAlign: "center" }} onSubmit={this.doLogin}>
-                <FormGroup
+              <Form
+                style={{ textAlign: "center" }}
+                noValidate
+                autoComplete="off"
+                onSubmit={this.doLogin}
+              >
+                <Grid
+                  id="grid"
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
+                    backgroundColor: "#ffffff",
                     padding: "1.5rem",
+                    borderRadius: "15px",
+                    boxShadow: "0 0.5rem 0.75rem -0.25rem rgb(39 48 54 / 45%)",
                   }}
                 >
-                  <Input
-                    autoFocus
-                    type="text"
-                    name="utente"
-                    id="utente"
-                    value={this.state.utente}
-                    placeholder="Nome utente"
-                    autoComplete="utente"
-                    onChange={this.changeHandler}
-                    style={{ padding: "0.25rem" }}
-                  />
-                </FormGroup>
+                  <div>
+                    <TextField
+                      variant="outlined"
+                      type="text"
+                      name="utente"
+                      id="utente"
+                      value={this.state.utente}
+                      label="Nome utente"
+                      autoComplete="utente"
+                      onChange={this.changeHandler}
+                      style={{ marginTop: "25px", marginBottom: "10px" }}
+                    />
+                  </div>
 
-                <FormGroup
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    padding: "1.5rem",
-                  }}
-                >
-                  <Input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={this.state.password}
-                    placeholder="Password"
-                    autoComplete="password"
-                    onChange={this.changeHandler}
-                    style={{ padding: "0.35rem", borderRadius: "4px" }}
-                  />
-                </FormGroup>
+                  <div>
+                    <TextField
+                      variant="outlined"
+                      type="password"
+                      name="password"
+                      id="password"
+                      label="Password"
+                      value={this.state.password}
+                      autoComplete="password"
+                      onChange={this.changeHandler}
+                      style={{ marginTop: "10px", marginBottom: "10px" }}
+                    />
+                  </div>
 
-                <Button type="submit" variant="primary" size="lg" block>
-                  Login
-                </Button>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    style={{
+                      color: "white",
+                      backgroundColor: "#006ddb",
+                      marginTop: "10px",
+                    }}
+                  >
+                    Login
+                  </Button>
+                </Grid>
                 {this.state.error && (
                   <Alert color="danger">{this.state.error}</Alert>
                 )}

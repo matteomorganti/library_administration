@@ -45,7 +45,6 @@ class Login extends Component {
       }
     );
   };
-  
 
   render() {
     return (
@@ -123,7 +122,6 @@ class Login extends Component {
                 {this.state.error && (
                   <Alert color="danger">{this.state.error}</Alert>
                 )}
-                
               </Form>
             </Col>
           </Row>

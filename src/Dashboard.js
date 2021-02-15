@@ -28,12 +28,18 @@ class Dashboard extends Component {
     user: [],
     book: [],
     genre: [],
-    currGen: null,
+    currGen: 1,
     titolo: "",
     trama: "",
-    quantita: "",
+    quantita: 1,
     cover: null,
     error: "",
+    addGen: "",
+    addNomeAutore: "",
+    addCognomeAutore: "",
+    addDataAutore: "",
+    autore: "",
+    idLibro: 0,
   };
 
   static propTypes = {
@@ -55,19 +61,6 @@ class Dashboard extends Component {
     const token = localStorage.getItem("token");
     this.setState({ token: token });
     console.log(token);
-  }
-
-  libriPrenotati() {
-    let JWTToken = localStorage.getItem("token");
-    axios
-      .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/prenotazioni/libriUtente/" +
-          utente,
-        { headers: { Authorization: `${JWTToken}` } }
-      )
-      .then((response) => {
-        console.log(response);
-      });
   }
 
   getUser = async () => {
@@ -114,18 +107,17 @@ class Dashboard extends Component {
 
   addNewLibro(titolo, trama, quantita, genere, copertina) {
     genere = this.state.currGen;
-    copertina = new FormData();
-    copertina.append("image", this.state.cover);
+    copertina = this.state.cover.name;
     let JWTToken = localStorage.getItem("token");
     axios
       .post(
         "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/upload/caricaLibro",
         {
-          titolo: "Maxis",
-          genere: 1,
-          trama: "DFSFSDFFDS",
+          titolo,
+          trama,
+          quantita,
+          genere,
           copertina,
-          quantita: 1,
         },
         {
           headers: {
@@ -182,8 +174,60 @@ class Dashboard extends Component {
     });
   };
 
+  addGenere = async (genere) => {
+    genere = this.state.addGen;
+    let JWTToken = localStorage.getItem("token");
+    axios
+      .post(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/genere/addGenere",
+        { genere },
+        { headers: { Authorization: `${JWTToken}` } }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.error(`Error:  ${error}`));
+    this.setState({ error: "Qualcosa è andato storto" });
+  };
+
+  addAutore = async (nome, cognome, dataNascita) => {
+    nome = this.state.addNomeAutore;
+    cognome = this.state.addCognomeAutore;
+    dataNascita = this.state.addDataAutore;
+    let JWTToken = localStorage.getItem("token");
+    axios
+      .post(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/genere/addGenere",
+        { nome, cognome, dataNascita },
+        { headers: { Authorization: `${JWTToken}` } }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.error(`Error:  ${error}`));
+    this.setState({ error: "Qualcosa è andato storto" });
+  };
+
+  associaAutore = async (libro, autore) => {
+    libro = this.state.idLibro;
+    autore = this.state.autore;
+    let JWTToken = localStorage.getItem("token");
+    axios
+      .post(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/associaAutore",
+        { libro, autore },
+        { headers: { Authorization: `${JWTToken}` } }
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.error(`Error:  ${error}`));
+    this.setState({ error: "Qualcosa è andato storto" });
+  };
+
   handleFile(e) {
     this.setState({ cover: e.target.files[0] });
+    console.log(this.state.cover);
   }
 
   render() {
@@ -319,7 +363,7 @@ class Dashboard extends Component {
 
                 <Dropdown.Menu>
                   {this.state.genre.map((genere) => (
-                    <Dropdown.Item onClick={this.setGenere} key={genere.ID}>
+                    <Dropdown.Item key={genere.ID}>
                       {genere.Descrizione}
                     </Dropdown.Item>
                   ))}
@@ -342,6 +386,124 @@ class Dashboard extends Component {
               <Alert color="danger">{this.state.error}</Alert>
             )}
           </Form>
+
+          <Form>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="addGen"
+                id="addGen"
+                label="Inserisci genere"
+                value={this.state.addGen}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <Button
+              onClick={this.addGenere}
+              variant="contained"
+              style={{
+                color: "whitesmoke",
+                backgroundColor: "#006ddb",
+                marginTop: "10px",
+                marginBottom: "30px",
+              }}
+            >
+              Inserisci
+            </Button>
+          </Form>
+          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
+          <Form>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="addNomeAutore"
+                id="addNomeAutore"
+                label="Nome"
+                value={this.state.addNomeAutore}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="addCognomeAutore"
+                id="addCognomeAutore"
+                label="Cognome"
+                value={this.state.addCognomeAutore}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="addDataAutore"
+                id="addDataAutore"
+                label="Data di nascita"
+                value={this.state.addDataAutore}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <Button
+              onClick={this.addAutore}
+              variant="contained"
+              style={{
+                color: "whitesmoke",
+                backgroundColor: "#006ddb",
+                marginTop: "10px",
+                marginBottom: "30px",
+              }}
+            >
+              Inserisci Autore
+            </Button>
+          </Form>
+          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
+          <Form>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="autore"
+                id="autore"
+                label="Autore"
+                value={this.state.autore}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <div>
+              <TextField
+                variant="outlined"
+                type="text"
+                name="idLibro"
+                id="idLibro"
+                label="Libro"
+                value={this.state.idLibro}
+                onChange={this.changeHandler}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+              />
+            </div>
+            <Button
+              onClick={this.associaAutore}
+              variant="contained"
+              style={{
+                color: "whitesmoke",
+                backgroundColor: "#006ddb",
+                marginTop: "10px",
+                marginBottom: "30px",
+              }}
+            >
+              Aggiungi Autore
+            </Button>
+          </Form>
+          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
         </div>
       </div>
     );

@@ -40,6 +40,7 @@ class Dashboard extends Component {
     addDataAutore: "",
     autore: "",
     idLibro: 0,
+    grafico: [],
   };
 
   static propTypes = {
@@ -99,6 +100,7 @@ class Dashboard extends Component {
           ID: obj.ID,
           Titolo: obj.Titolo,
           Genere: obj.Genere,
+          Autori: obj.Autori,
         }));
         this.setState({ book: libri });
       })
@@ -197,7 +199,7 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .post(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/genere/addGenere",
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/autori/addAutore",
         { nome, cognome, dataNascita },
         { headers: { Authorization: `${JWTToken}` } }
       )
@@ -223,6 +225,19 @@ class Dashboard extends Component {
       })
       .catch((error) => console.error(`Error:  ${error}`));
     this.setState({ error: "Qualcosa è andato storto" });
+  };
+
+  getGrafico = async () => {
+    axios
+      .get(
+        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese"
+      )
+      .then((response) => {
+        this.setState({ grafico: response });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   handleFile(e) {
@@ -293,6 +308,8 @@ class Dashboard extends Component {
                   <TableRow>
                     <TableCell>Id</TableCell>
                     <TableCell>Titolo</TableCell>
+                    <TableCell>Generi</TableCell>
+                    <TableCell>Autori</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -300,6 +317,8 @@ class Dashboard extends Component {
                     <TableRow key="book">
                       <TableCell>{libro.ID}</TableCell>
                       <TableCell>{libro.Titolo}</TableCell>
+                      <TableCell>{libro.Genere}</TableCell>
+                      <TableCell>{libro.Autori}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -504,6 +523,20 @@ class Dashboard extends Component {
             </Button>
           </Form>
           {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
+          <div>
+            <Button
+              onClick={this.getGrafico}
+              variant="contained"
+              style={{
+                color: "whitesmoke",
+                backgroundColor: "#006ddb",
+                marginTop: "10px",
+                marginBottom: "30px",
+              }}
+            >
+              Visualizza grafico
+            </Button>
+          </div>
         </div>
       </div>
     );

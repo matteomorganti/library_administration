@@ -41,6 +41,7 @@ class Dashboard extends Component {
     autore: "",
     idLibro: 0,
     grafico: [],
+    anno: "",
   };
 
   static propTypes = {
@@ -228,12 +229,16 @@ class Dashboard extends Component {
   };
 
   getGrafico = async () => {
+    let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese"
+        `http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese/${this.state.anno}`,
+        { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
-        this.setState({ grafico: response });
+        console.log(response.data);
+        console.log(JWTToken);
+        //this.setState({ grafico: response });
       })
       .catch((error) => {
         console.log(error);

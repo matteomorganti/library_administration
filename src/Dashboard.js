@@ -41,7 +41,7 @@ class Dashboard extends Component {
     autore: "",
     idLibro: 0,
     grafico: [],
-    anno: "",
+    anno: "2020",
   };
 
   static propTypes = {
@@ -110,7 +110,12 @@ class Dashboard extends Component {
 
   addNewLibro(titolo, trama, quantita, genere, copertina) {
     genere = this.state.currGen;
-    copertina = this.state.cover.name;
+    console.log(this.state.cover);
+    copertina = new FormData();
+    copertina.append("copertina", this.state.cover, {
+      filename: this.state.cover.name,
+    });
+    console.log(copertina);
     let JWTToken = localStorage.getItem("token");
     axios
       .post(
@@ -125,6 +130,8 @@ class Dashboard extends Component {
         {
           headers: {
             Authorization: `${JWTToken}`,
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
           },
         }
       )
@@ -232,7 +239,7 @@ class Dashboard extends Component {
     let JWTToken = localStorage.getItem("token");
     axios
       .get(
-        `http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese/${this.state.anno}`,
+        `http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese/ ${this.state.anno}`,
         { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
@@ -529,6 +536,32 @@ class Dashboard extends Component {
           </Form>
           {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
           <div>
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                Anno
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => this.setState({ anno: 2019 })}
+                  key={"anno0"}
+                >
+                  2019
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => this.setState({ anno: 2020 })}
+                  key={"anno1"}
+                >
+                  2020
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => this.setState({ anno: 2021 })}
+                  key={"anno2"}
+                >
+                  2021
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
             <Button
               onClick={this.getGrafico}
               variant="contained"

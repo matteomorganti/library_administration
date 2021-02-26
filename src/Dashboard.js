@@ -32,7 +32,7 @@ class Dashboard extends Component {
     titolo: "",
     trama: "",
     quantita: 1,
-    cover: null,
+    cover: {},
     error: "",
     addGen: "",
     addNomeAutore: "",
@@ -109,7 +109,7 @@ class Dashboard extends Component {
   };
 
   addNewLibro(titolo, trama, quantita, genere, copertina) {
-    genere = this.state.currGen;
+    /*genere = this.state.currGen;
     console.log(this.state.cover);
     copertina = new FormData();
     copertina.append("copertina", this.state.cover, {
@@ -140,7 +140,36 @@ class Dashboard extends Component {
         console.log(JWTToken);
       })
       .catch((error) => console.error(`Error:  ${error}`));
-    this.setState({ error: "Qualcosa è andato storto" });
+    this.setState({ error: "Qualcosa è andato storto" });*/
+    genere = this.state.currGen;
+    let JWTToken = localStorage.getItem("token");
+    var axios = require("axios");
+    var FormData = require("form-data");
+    var fs = require("fs");
+    var data = new FormData();
+    data.append("titolo", this.state.titolo);
+    data.append("trama", this.state.trama);
+    data.append("quantita", this.state.quantita);
+    data.append("genere", this.state.currGen);
+    data.append("copertina", this.state.cover);
+
+    var config = {
+      method: "post",
+      url: "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/upload/caricaLibro",
+      headers: {
+        Authorization: `${JWTToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   doAddNewLibro = async () => {

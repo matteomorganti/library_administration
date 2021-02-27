@@ -20,6 +20,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
+import { Bar } from "react-chartjs-2";
 import AuthenticationService from "./AuthenticationService";
 import "./css/Dashboard.css";
 
@@ -109,49 +110,21 @@ class Dashboard extends Component {
   };
 
   addNewLibro(titolo, trama, quantita, genere, copertina) {
-    /*genere = this.state.currGen;
-    console.log(this.state.cover);
-    copertina = new FormData();
-    copertina.append("copertina", this.state.cover, {
-      filename: this.state.cover.name,
-    });
-    console.log(copertina);
-    let JWTToken = localStorage.getItem("token");
-    axios
-      .post(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/upload/caricaLibro",
-        {
-          titolo,
-          trama,
-          quantita,
-          genere,
-          copertina,
-        },
-        {
-          headers: {
-            Authorization: `${JWTToken}`,
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        console.log(JWTToken);
-      })
-      .catch((error) => console.error(`Error:  ${error}`));
-    this.setState({ error: "Qualcosa è andato storto" });*/
+    titolo = this.state.titolo;
+    trama = this.state.trama;
+    quantita = this.state.quantita;
     genere = this.state.currGen;
+    copertina = this.state.cover;
     let JWTToken = localStorage.getItem("token");
     var axios = require("axios");
     var FormData = require("form-data");
     var fs = require("fs");
     var data = new FormData();
-    data.append("titolo", this.state.titolo);
-    data.append("trama", this.state.trama);
-    data.append("quantita", this.state.quantita);
-    data.append("genere", this.state.currGen);
-    data.append("copertina", this.state.cover);
+    data.append("titolo", titolo);
+    data.append("trama", trama);
+    data.append("quantita", quantita);
+    data.append("genere", genere);
+    data.append("copertina", copertina);
 
     var config = {
       method: "post",
@@ -248,9 +221,10 @@ class Dashboard extends Component {
   };
 
   associaAutore = async (libro, autore) => {
-    libro = this.state.idLibro;
+    /*libro = this.state.idLibro;
     autore = this.state.autore;
     let JWTToken = localStorage.getItem("token");
+    console.log(libro, autore);
     axios
       .post(
         "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/associaAutore",
@@ -261,7 +235,33 @@ class Dashboard extends Component {
         console.log(response);
       })
       .catch((error) => console.error(`Error:  ${error}`));
-    this.setState({ error: "Qualcosa è andato storto" });
+    this.setState({ error: "Qualcosa è andato storto" });*/
+    let JWTToken = localStorage.getItem("token");
+    libro = this.state.idLibro;
+    autore = this.state.autore;
+    var axios = require("axios");
+    var data = JSON.stringify({
+      libro: libro,
+      autore: autore,
+    });
+
+    var config = {
+      method: "post",
+      url: "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/associaAutore",
+      headers: {
+        Authorization: `${JWTToken}`,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   getGrafico = async () => {
@@ -274,7 +274,33 @@ class Dashboard extends Component {
       .then((response) => {
         console.log(response.data);
         console.log(JWTToken);
-        //this.setState({ grafico: response });
+        const datiGrafico = response.data.data[0];
+        let numeroLibri = [];
+        let mese = [];
+        Array.from(datiGrafico).forEach((element) => {
+          numeroLibri.push(element.NumeroLibri);
+          mese.push(element.Mese);
+        });
+        this.setState({
+          grafico: {
+            labels: mese,
+            datasets: [
+              {
+                label: "Libri letti",
+                data: numeroLibri,
+                backgroundColor: [
+                  "rgba(255,105,145,0.6)",
+                  "rgba(155,100,210,0.6)",
+                  "rgba(90,178,255,0.6)",
+                  "rgba(240,134,67,0.6)",
+                  "rgba(120,120,120,0.6)",
+                  "rgba(250,55,197,0.6)",
+                ],
+              },
+            ],
+          },
+        });
+        console.log(this.state.grafico);
       })
       .catch((error) => {
         console.log(error);
@@ -603,6 +629,12 @@ class Dashboard extends Component {
             >
               Visualizza grafico
             </Button>
+          </div>
+          <div>
+            <Bar
+              data={this.state.grafico}
+              options={{ maintainAspectRatio: false }}
+            />
           </div>
         </div>
       </div>

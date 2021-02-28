@@ -273,7 +273,7 @@ class Dashboard extends Component {
       })
       .catch(function (error) {
         console.log(error);
-        alert("Autore già associato :^/");
+        alert("Qualcosa è andato storto:^/");
       });
   };
 

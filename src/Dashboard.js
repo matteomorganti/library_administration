@@ -12,6 +12,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import AppBar from "@material-ui/core/AppBar";
+import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -44,9 +45,9 @@ class Dashboard extends Component {
     addNomeAutore: "",
     addCognomeAutore: "",
     addDataAutore: "",
-    autore: [],
-    idLibro: 0,
-    idAutore: 0,
+    author: [],
+    idLibro: 1,
+    idAutore: 1,
     grafico: [],
     anno: "2020",
     showHome: false,
@@ -197,6 +198,18 @@ class Dashboard extends Component {
     });
   };
 
+  setLibro = async (libro) => {
+    this.setState({
+      idLibro: libro,
+    });
+  };
+
+  setAutore = async (autore) => {
+    this.setState({
+      idAutore: autore,
+    });
+  };
+
   addGenere = async (genere) => {
     genere = this.state.addGen;
     let JWTToken = localStorage.getItem("token");
@@ -329,7 +342,7 @@ class Dashboard extends Component {
           Nome: obj.Nome,
           Cognome: obj.Cognome,
         }));
-        this.setState({ autore: autori });
+        this.setState({ author: autori });
         console.log(autori);
       })
       .catch(function (error) {
@@ -356,6 +369,8 @@ class Dashboard extends Component {
   mostraGestione = async () => {
     this.setState({ showGestione: true, showLibri: false, showHome: false });
     this.getAllAutori();
+    this.getAllLibri();
+    this.getGenre();
   };
 
   render() {
@@ -558,23 +573,15 @@ class Dashboard extends Component {
                           onChange={(e) => this.handleFile(e)}
                         />
                       </div>
+                      <br />
                       <div>
-                        <Button
-                          onClick={this.getGenre}
-                          variant="contained"
-                          style={{
-                            color: "whitesmoke",
-                            backgroundColor: "#006ddb",
-                            marginTop: "10px",
-                            marginBottom: "30px",
-                          }}
-                        >
-                          Recupera Generi
-                        </Button>
+                        <InputLabel id="demo-simple-select-outlined-label">
+                          Seleziona Genere
+                        </InputLabel>
                         <Select
                           defaultValue="Generi"
                           id="grouped-select"
-                          onClick={this.getGenre}
+                          onChange={this.getGenre}
                         >
                           {this.state.genre.map((genere) => (
                             <MenuItem key={genere.ID}>
@@ -686,8 +693,8 @@ class Dashboard extends Component {
                         <TextField
                           variant="outlined"
                           type="text"
-                          name="autore"
-                          id="autore"
+                          name="idAutore"
+                          id="idAutore"
                           label="Id autore"
                           value={this.state.idAutore}
                           onChange={this.changeHandler}
@@ -733,8 +740,8 @@ class Dashboard extends Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {this.state.autore.map((autore) => (
-                          <TableRow key="autore">
+                        {this.state.author.map((autore) => (
+                          <TableRow key="autoretab">
                             <TableCell>{autore.ID}</TableCell>
                             <TableCell>{autore.Nome}</TableCell>
                             <TableCell>{autore.Cognome}</TableCell>

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Dropdown from "react-bootstrap/Dropdown";
-import { Alert, Form } from "reactstrap";
+import { Form } from "reactstrap";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -12,6 +11,8 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import PersonIcon from "@material-ui/icons/Person";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
+import AppBar from "@material-ui/core/AppBar";
+import Select from "@material-ui/core/Select";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
@@ -20,6 +21,10 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
+import Tabs from "@material-ui/core/Tabs";
+import Grid from "@material-ui/core/Grid";
+import Tab from "@material-ui/core/Tab";
+import MenuItem from "@material-ui/core/MenuItem";
 import { Bar } from "react-chartjs-2";
 import AuthenticationService from "./AuthenticationService";
 import "./css/Dashboard.css";
@@ -39,10 +44,14 @@ class Dashboard extends Component {
     addNomeAutore: "",
     addCognomeAutore: "",
     addDataAutore: "",
-    autore: "",
+    autore: [],
     idLibro: 0,
+    idAutore: 0,
     grafico: [],
     anno: "2020",
+    showHome: false,
+    showLibri: false,
+    showGestione: false,
   };
 
   static propTypes = {
@@ -63,6 +72,7 @@ class Dashboard extends Component {
   componentDidMount() {
     const token = localStorage.getItem("token");
     this.setState({ token: token });
+    this.mostraHome();
     console.log(token);
   }
 
@@ -139,6 +149,7 @@ class Dashboard extends Component {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        alert("Operazione riuscita!");
       })
       .catch(function (error) {
         console.log(error);
@@ -197,6 +208,7 @@ class Dashboard extends Component {
       )
       .then((response) => {
         console.log(response);
+        alert("Operazione riuscita!");
       })
       .catch((error) => console.error(`Error:  ${error}`));
     this.setState({ error: "Qualcosa è andato storto" });
@@ -215,30 +227,16 @@ class Dashboard extends Component {
       )
       .then((response) => {
         console.log(response);
+        alert("Operazione riuscita!");
       })
       .catch((error) => console.error(`Error:  ${error}`));
     this.setState({ error: "Qualcosa è andato storto" });
   };
 
   associaAutore = async (libro, autore) => {
-    /*libro = this.state.idLibro;
-    autore = this.state.autore;
-    let JWTToken = localStorage.getItem("token");
-    console.log(libro, autore);
-    axios
-      .post(
-        "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/libri/associaAutore",
-        { libro, autore },
-        { headers: { Authorization: `${JWTToken}` } }
-      )
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.error(`Error:  ${error}`));
-    this.setState({ error: "Qualcosa è andato storto" });*/
     let JWTToken = localStorage.getItem("token");
     libro = this.state.idLibro;
-    autore = this.state.autore;
+    autore = this.state.idAutore;
     var axios = require("axios");
     var data = JSON.stringify({
       libro: libro,
@@ -258,17 +256,20 @@ class Dashboard extends Component {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        alert("Operazione riuscita!");
       })
       .catch(function (error) {
         console.log(error);
+        alert("Autore già associato :^/");
       });
   };
 
-  getGrafico = async () => {
+  getGrafico = async (anno) => {
     let JWTToken = localStorage.getItem("token");
+    anno = this.state.anno;
     axios
       .get(
-        `http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese/ ${this.state.anno}`,
+        `http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/grafici/getAllNumberLibriMese/ ${anno}`,
         { headers: { Authorization: `${JWTToken}` } }
       )
       .then((response) => {
@@ -307,33 +308,78 @@ class Dashboard extends Component {
       });
   };
 
+  getAllAutori = async () => {
+    let JWTToken = localStorage.getItem("token");
+    var axios = require("axios");
+
+    var config = {
+      method: "get",
+      url: "http://g0ptrkwkej5fhqfl.myfritz.net:8090/api/autori/getAll",
+      headers: {
+        Authorization: `${JWTToken}`,
+      },
+    };
+
+    axios(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        console.log(JWTToken);
+        const autori = response.data.data[0].map((obj) => ({
+          ID: obj.ID,
+          Nome: obj.Nome,
+          Cognome: obj.Cognome,
+        }));
+        this.setState({ autore: autori });
+        console.log(autori);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   handleFile(e) {
     this.setState({ cover: e.target.files[0] });
     console.log(this.state.cover);
   }
+
+  mostraHome = async () => {
+    this.setState({ showHome: true, showLibri: false, showGestione: false });
+    this.getGrafico();
+    this.getUser();
+  };
+
+  mostraLibri = async () => {
+    this.setState({ showLibri: true, showHome: false, showGestione: false });
+    this.getAllLibri();
+  };
+
+  mostraGestione = async () => {
+    this.setState({ showGestione: true, showLibri: false, showHome: false });
+    this.getAllAutori();
+  };
 
   render() {
     return (
       <div className="sidBar">
         <div className="sb">
           <List component="nav" aria-labelledby="nested-list-subheader">
-            <ListItem button>
+            <ListItem button onClick={this.mostraHome}>
               <ListItemIcon>
                 <HomeIcon className={"menuIcon"} />
               </ListItemIcon>
               <ListItemText primary="Home" />
             </ListItem>
-            <ListItem button onClick={this.getAllLibri}>
+            <ListItem button onClick={this.mostraLibri}>
               <ListItemIcon>
                 <BookIcon className={"menuIcon"} />
               </ListItemIcon>
               <ListItemText primary="Lista libri" />
             </ListItem>
-            <ListItem button onClick={this.getUser}>
+            <ListItem button onClick={this.mostraGestione}>
               <ListItemIcon>
                 <PersonIcon className={"menuIcon"} />
               </ListItemIcon>
-              <ListItemText primary="Lista utenti" />
+              <ListItemText primary="Gestione" />
             </ListItem>
             <ListItem button onClick={this.doLogout}>
               <ListItemIcon>
@@ -344,297 +390,362 @@ class Dashboard extends Component {
           </List>
         </div>
         <div className="main">
-          <div style={{ padding: "2rem" }}>
-            <TableContainer component={Paper}>
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Id</TableCell>
-                    <TableCell>Nome</TableCell>
-                    <TableCell>Cognome</TableCell>
-                    <TableCell>Email</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.user.map((utente) => (
-                    <TableRow key="user">
-                      <TableCell>{utente.ID}</TableCell>
-                      <TableCell>{utente.Nome}</TableCell>
-                      <TableCell>{utente.Cognome}</TableCell>
-                      <TableCell>{utente.Email}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-          <div style={{ padding: "2rem" }}>
-            <TableContainer component={Paper}>
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Id</TableCell>
-                    <TableCell>Titolo</TableCell>
-                    <TableCell>Generi</TableCell>
-                    <TableCell>Autori</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {this.state.book.map((libro) => (
-                    <TableRow key="book">
-                      <TableCell>{libro.ID}</TableCell>
-                      <TableCell>{libro.Titolo}</TableCell>
-                      <TableCell>{libro.Genere}</TableCell>
-                      <TableCell>{libro.Autori}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-          <Form noValidate autoComplete="off">
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="titolo"
-                id="titolo"
-                value={this.state.titolo}
-                label="Titolo"
-                autoComplete="titolo"
-                onChange={this.changeHandler}
-                style={{ marginTop: "25px", marginBottom: "10px" }}
-              />
-            </div>
-
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="trama"
-                id="trama"
-                label="Trama"
-                value={this.state.trama}
-                autoComplete="trama"
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="quantita"
-                id="quantita"
-                label="Quantità"
-                value={this.state.quantita}
-                autoComplete="quantita"
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <div className="">
-              <label>Seleziona Copertina</label>
-              <input
-                type="file"
-                name="copertina"
-                onChange={(e) => this.handleFile(e)}
-              />
-            </div>
-            <div>
-              <Dropdown onClick={this.getGenre}>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Dropdown Button
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  {this.state.genre.map((genere) => (
-                    <Dropdown.Item key={genere.ID}>
-                      {genere.Descrizione}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <Button
-              onClick={this.doAddNewLibro}
-              variant="contained"
-              style={{
-                color: "whitesmoke",
-                backgroundColor: "#006ddb",
-                marginTop: "10px",
-                marginBottom: "30px",
-              }}
-            >
-              Invia
-            </Button>
-            {this.state.error && (
-              <Alert color="danger">{this.state.error}</Alert>
+          <div style={{ paddingLeft: "2rem", paddingRight: "2rem" }}>
+            {this.state.showHome && (
+              <div>
+                <div>
+                  <h1>Grafici</h1>
+                  <h3>Seleziona anno da visualizzare:</h3>
+                  <AppBar position="static" elevation={0}>
+                    <Tabs
+                      aria-label="simple tabs example"
+                      style={{ backgroundColor: "#f3f4f5" }}
+                    >
+                      <Tab
+                        label="2019"
+                        style={{ color: "#3e3730" }}
+                        onClick={() => this.setState({ anno: 2019 })}
+                      />
+                      <Tab
+                        label="2020"
+                        style={{ color: "#3e3730" }}
+                        onClick={() => this.setState({ anno: 2020 })}
+                      />
+                      <Tab
+                        label="2021"
+                        style={{ color: "#3e3730" }}
+                        onClick={() => this.setState({ anno: 2021 })}
+                      />
+                    </Tabs>
+                  </AppBar>
+                  <Button
+                    onClick={this.getGrafico}
+                    variant="contained"
+                    style={{
+                      color: "whitesmoke",
+                      backgroundColor: "#006ddb",
+                      marginTop: "10px",
+                      marginBottom: "30px",
+                    }}
+                  >
+                    Visualizza Grafico
+                  </Button>
+                </div>
+                <div style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}>
+                  <Bar
+                    data={this.state.grafico}
+                    options={{ maintainAspectRatio: false }}
+                  />
+                </div>
+                <h2>Lista utenti:</h2>
+                <TableContainer component={Paper}>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Id</TableCell>
+                        <TableCell>Nome</TableCell>
+                        <TableCell>Cognome</TableCell>
+                        <TableCell>Email</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {this.state.user.map((utente) => (
+                        <TableRow key="user">
+                          <TableCell>{utente.ID}</TableCell>
+                          <TableCell>{utente.Nome}</TableCell>
+                          <TableCell>{utente.Cognome}</TableCell>
+                          <TableCell>{utente.Email}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
             )}
-          </Form>
-
-          <Form>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="addGen"
-                id="addGen"
-                label="Inserisci genere"
-                value={this.state.addGen}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <Button
-              onClick={this.addGenere}
-              variant="contained"
-              style={{
-                color: "whitesmoke",
-                backgroundColor: "#006ddb",
-                marginTop: "10px",
-                marginBottom: "30px",
-              }}
-            >
-              Inserisci
-            </Button>
-          </Form>
-          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
-          <Form>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="addNomeAutore"
-                id="addNomeAutore"
-                label="Nome"
-                value={this.state.addNomeAutore}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="addCognomeAutore"
-                id="addCognomeAutore"
-                label="Cognome"
-                value={this.state.addCognomeAutore}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="addDataAutore"
-                id="addDataAutore"
-                label="Data di nascita"
-                value={this.state.addDataAutore}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <Button
-              onClick={this.addAutore}
-              variant="contained"
-              style={{
-                color: "whitesmoke",
-                backgroundColor: "#006ddb",
-                marginTop: "10px",
-                marginBottom: "30px",
-              }}
-            >
-              Inserisci Autore
-            </Button>
-          </Form>
-          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
-          <Form>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="autore"
-                id="autore"
-                label="Autore"
-                value={this.state.autore}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <div>
-              <TextField
-                variant="outlined"
-                type="text"
-                name="idLibro"
-                id="idLibro"
-                label="Libro"
-                value={this.state.idLibro}
-                onChange={this.changeHandler}
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-              />
-            </div>
-            <Button
-              onClick={this.associaAutore}
-              variant="contained"
-              style={{
-                color: "whitesmoke",
-                backgroundColor: "#006ddb",
-                marginTop: "10px",
-                marginBottom: "30px",
-              }}
-            >
-              Aggiungi Autore
-            </Button>
-          </Form>
-          {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
-          <div>
-            <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Anno
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={() => this.setState({ anno: 2019 })}
-                  key={"anno0"}
-                >
-                  2019
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => this.setState({ anno: 2020 })}
-                  key={"anno1"}
-                >
-                  2020
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => this.setState({ anno: 2021 })}
-                  key={"anno2"}
-                >
-                  2021
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Button
-              onClick={this.getGrafico}
-              variant="contained"
-              style={{
-                color: "whitesmoke",
-                backgroundColor: "#006ddb",
-                marginTop: "10px",
-                marginBottom: "30px",
-              }}
-            >
-              Visualizza grafico
-            </Button>
           </div>
           <div>
-            <Bar
-              data={this.state.grafico}
-              options={{ maintainAspectRatio: false }}
-            />
+            {this.state.showLibri && (
+              <div
+                style={{
+                  paddingLeft: "2.5rem",
+                  paddingRight: "2.5rem",
+                  paddingBottom: "2.5rem",
+                }}
+              >
+                <h1>Lista Libri:</h1>
+                <TableContainer component={Paper}>
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Id</TableCell>
+                        <TableCell>Titolo</TableCell>
+                        <TableCell>Generi</TableCell>
+                        <TableCell>Autori</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {this.state.book.map((libro) => (
+                        <TableRow key="book">
+                          <TableCell>{libro.ID}</TableCell>
+                          <TableCell>{libro.Titolo}</TableCell>
+                          <TableCell>{libro.Genere}</TableCell>
+                          <TableCell>{libro.Autori}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            )}
+          </div>
+          <div>
+            {this.state.showGestione && (
+              <div>
+                <h1 style={{ paddingLeft: "2rem" }}>Gestione</h1>
+                <Grid container spacing={3}>
+                  <Grid item xs={4}>
+                    <Form
+                      noValidate
+                      autoComplete="off"
+                      style={{ paddingLeft: "2rem" }}
+                    >
+                      <h3>Inserisci nuovo libro:</h3>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="titolo"
+                          id="titolo"
+                          value={this.state.titolo}
+                          label="Titolo"
+                          autoComplete="titolo"
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="trama"
+                          id="trama"
+                          label="Trama"
+                          value={this.state.trama}
+                          autoComplete="trama"
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="quantita"
+                          id="quantita"
+                          label="Quantità"
+                          value={this.state.quantita}
+                          autoComplete="quantita"
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <div className="">
+                        <label>Seleziona Copertina</label>
+                        <input
+                          type="file"
+                          name="copertina"
+                          onChange={(e) => this.handleFile(e)}
+                        />
+                      </div>
+                      <div>
+                        <Button
+                          onClick={this.getGenre}
+                          variant="contained"
+                          style={{
+                            color: "whitesmoke",
+                            backgroundColor: "#006ddb",
+                            marginTop: "10px",
+                            marginBottom: "30px",
+                          }}
+                        >
+                          Recupera Generi
+                        </Button>
+                        <Select
+                          defaultValue="Generi"
+                          id="grouped-select"
+                          onClick={this.getGenre}
+                        >
+                          {this.state.genre.map((genere) => (
+                            <MenuItem key={genere.ID}>
+                              {genere.Descrizione}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </div>
+                      <Button
+                        onClick={this.doAddNewLibro}
+                        variant="contained"
+                        style={{
+                          color: "whitesmoke",
+                          backgroundColor: "#006ddb",
+                          marginTop: "10px",
+                          marginBottom: "30px",
+                        }}
+                      >
+                        Invia
+                      </Button>
+                    </Form>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Form>
+                      <h3>Inserisci nuovo genere:</h3>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="addGen"
+                          id="addGen"
+                          label="Inserisci genere"
+                          value={this.state.addGen}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <Button
+                        onClick={this.addGenere}
+                        variant="contained"
+                        style={{
+                          color: "whitesmoke",
+                          backgroundColor: "#006ddb",
+                          marginTop: "10px",
+                          marginBottom: "30px",
+                        }}
+                      >
+                        Inserisci
+                      </Button>
+                    </Form>
+                  </Grid>
+                  <Grid item xs={4}>
+                    {" "}
+                    <Form>
+                      <h3>Inserisci nuovo autore:</h3>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="addNomeAutore"
+                          id="addNomeAutore"
+                          label="Nome"
+                          value={this.state.addNomeAutore}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="addCognomeAutore"
+                          id="addCognomeAutore"
+                          label="Cognome"
+                          value={this.state.addCognomeAutore}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="addDataAutore"
+                          id="addDataAutore"
+                          label="Data di nascita"
+                          placeholder="AAAA-MM-GG"
+                          value={this.state.addDataAutore}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <Button
+                        onClick={this.addAutore}
+                        variant="contained"
+                        style={{
+                          color: "whitesmoke",
+                          backgroundColor: "#006ddb",
+                          marginTop: "10px",
+                          marginBottom: "30px",
+                        }}
+                      >
+                        Inserisci Autore
+                      </Button>
+                    </Form>
+                    <Form>
+                      <h3>Associa autore ad un libro:</h3>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="autore"
+                          id="autore"
+                          label="Id autore"
+                          value={this.state.idAutore}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <div>
+                        <TextField
+                          variant="outlined"
+                          type="text"
+                          name="idLibro"
+                          id="idLibro"
+                          label="Id libro"
+                          value={this.state.idLibro}
+                          onChange={this.changeHandler}
+                          style={{ marginTop: "10px", marginBottom: "10px" }}
+                        />
+                      </div>
+                      <Button
+                        onClick={this.associaAutore}
+                        variant="contained"
+                        style={{
+                          color: "whitesmoke",
+                          backgroundColor: "#006ddb",
+                          marginTop: "10px",
+                          marginBottom: "30px",
+                        }}
+                      >
+                        Aggiungi Autore
+                      </Button>
+                    </Form>
+                  </Grid>
+                </Grid>
+                <div style={{ padding: "1rem" }}>
+                  <h2>Lista autori:</h2>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Id</TableCell>
+                          <TableCell>Nome</TableCell>
+                          <TableCell>Cognome</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {this.state.autore.map((autore) => (
+                          <TableRow key="autore">
+                            <TableCell>{autore.ID}</TableCell>
+                            <TableCell>{autore.Nome}</TableCell>
+                            <TableCell>{autore.Cognome}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
